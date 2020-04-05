@@ -18,5 +18,10 @@ namespace MattEland.ResumeProcessor.Models
         public string PostalCode { get; set; }
 
         public IList<Skill> DesiredSkills { get; set; } = new List<Skill>();
+
+        public bool IsSufficientScoreFor(decimal total)
+        {
+            return total > 50;
+        }
     }
 }

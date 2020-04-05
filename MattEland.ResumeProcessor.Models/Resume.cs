@@ -25,5 +25,8 @@ namespace MattEland.ResumeProcessor.Models
 
         public IList<Job> Jobs { get; set; } = new List<Job>();
         public IList<Education> Educations { get; set; } = new List<Education>();
+
+        [Required]
+        public string EmailAddress { get; set; }
     }
 }

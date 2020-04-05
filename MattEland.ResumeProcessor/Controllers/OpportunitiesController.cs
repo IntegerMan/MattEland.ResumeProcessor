@@ -11,27 +11,51 @@ namespace MattEland.ResumeProcessor.Controllers
     public class OpportunitiesController : Controller
     {
         [HttpGet]
-        public List<Opportunity> GetOpportunities()
+        public ActionResult<List<Opportunity>> GetOpportunities()
         {
             using (var context = new ResumeContext())
             {
-                // Add a sample opportunity if none is present
-                if (!context.Opportunities.Any())
+                InitOpportunitiesIfNeeded(context);
+
+                return Ok(context.Opportunities.Include(o => o.DesiredSkills).ToList());
+            }
+        }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<Opportunity> GetOpportunity(int id)
+        {
+            using (var context = new ResumeContext())
+            {
+                InitOpportunitiesIfNeeded(context);
+
+                var match = context.Opportunities.Include(o => o.DesiredSkills).FirstOrDefault(o => o.Id == id);
+
+                if (match != null)
                 {
-                    context.Opportunities.Add(new Opportunity()
-                    {
-                        Company = "FakeCorp",
-                        PostalCode = "43081",
-                        JobTitle = "Basket Engineer",
-                        DesiredSkills = new List<Skill>
-                        {
-                            new Skill { ShortName = "Underwater Basket Weaving", Level = SkillLevel.Beginner }
-                        }
-                    });
-                    context.SaveChanges();
+
+                    return Ok(match);
                 }
 
-                return context.Opportunities.Include(o => o.DesiredSkills).ToList();
+                return NotFound("No opportunity exists with that ID or you do not have access to it.");
+            }
+        }
+
+        private static void InitOpportunitiesIfNeeded(ResumeContext context)
+        {
+            // Add a sample opportunity if none is present
+            if (!context.Opportunities.Any())
+            {
+                context.Opportunities.Add(new Opportunity()
+                {
+                    Company = "FakeCorp",
+                    PostalCode = "43081",
+                    JobTitle = "Basket Engineer",
+                    DesiredSkills = new List<Skill>
+                    {
+                        new Skill {ShortName = "Underwater Basket Weaving", Level = SkillLevel.Beginner}
+                    }
+                });
+                context.SaveChanges();
             }
         }
     }
