@@ -14,6 +14,7 @@ namespace MattEland.ResumeProcessor
         }
 
         public DbSet<Opportunity> Opportunities { get; set; }
+        public DbSet<Resume> Resumes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

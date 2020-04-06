@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MattEland.ResumeProcessor.Logic;
 using MattEland.ResumeProcessor.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ namespace MattEland.ResumeProcessor.Controllers
             using var context = new ResumeContext();
             InitOpportunitiesIfNeeded(context);
 
-            var match = GetOppById(id, context);
+            var match = GetById(id, context);
 
             if (match != null)
             {
@@ -35,7 +36,7 @@ namespace MattEland.ResumeProcessor.Controllers
             return NotFound("No opportunity exists with that ID or you do not have access to it.");
         }
 
-        private static Opportunity GetOppById(int id, ResumeContext context)
+        private static Opportunity GetById(int id, ResumeContext context)
         {
             return context.Opportunities.Include(o => o.DesiredSkills).FirstOrDefault(o => o.Id == id);
         }
@@ -62,7 +63,7 @@ namespace MattEland.ResumeProcessor.Controllers
             
             using var context = new ResumeContext();
 
-            var existing = GetOppById(id, context);
+            var existing = GetById(id, context);
             if (existing == null) return NotFound("No opportunity exists with that ID or you do not have access to it.");
 
             existing.Company = opportunity.Company;
@@ -81,7 +82,7 @@ namespace MattEland.ResumeProcessor.Controllers
             using var context = new ResumeContext();
             InitOpportunitiesIfNeeded(context);
 
-            var match = GetOppById(id, context); ;
+            var match = GetById(id, context); ;
 
             if (match != null)
             {
@@ -113,4 +114,5 @@ namespace MattEland.ResumeProcessor.Controllers
             }
         }
     }
+
 }
