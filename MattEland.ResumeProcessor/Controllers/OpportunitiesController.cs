@@ -13,32 +13,52 @@ namespace MattEland.ResumeProcessor.Controllers
         [HttpGet]
         public ActionResult<List<Opportunity>> GetOpportunities()
         {
-            using (var context = new ResumeContext())
-            {
-                InitOpportunitiesIfNeeded(context);
+            using var context = new ResumeContext();
+            InitOpportunitiesIfNeeded(context);
 
-                return Ok(context.Opportunities.Include(o => o.DesiredSkills).ToList());
-            }
+            return Ok(context.Opportunities.Include(o => o.DesiredSkills).ToList());
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<Opportunity> GetOpportunity(int id)
         {
-            using (var context = new ResumeContext())
+            using var context = new ResumeContext();
+            InitOpportunitiesIfNeeded(context);
+
+            var match = GetOppById(id, context);
+
+            if (match != null)
             {
-                InitOpportunitiesIfNeeded(context);
-
-                var match = context.Opportunities.Include(o => o.DesiredSkills).FirstOrDefault(o => o.Id == id);
-
-                if (match != null)
-                {
-
-                    return Ok(match);
-                }
-
-                return NotFound("No opportunity exists with that ID or you do not have access to it.");
+                return Ok(match);
             }
+
+            return NotFound("No opportunity exists with that ID or you do not have access to it.");
         }
+
+        private static Opportunity GetOppById(int id, ResumeContext context)
+        {
+            return context.Opportunities.Include(o => o.DesiredSkills).FirstOrDefault(o => o.Id == id);
+        }
+
+        [HttpDelete("{id:int}")]
+        public ActionResult<Opportunity> DeleteOpportunity(int id)
+        {
+            using var context = new ResumeContext();
+            InitOpportunitiesIfNeeded(context);
+
+            var match = GetOppById(id, context); ;
+
+            if (match != null)
+            {
+                context.Opportunities.Remove(match);
+                context.SaveChanges();
+
+                return Ok();
+            }
+
+            return NotFound("No opportunity exists with that ID or you do not have access to it.");
+        }
+
 
         private static void InitOpportunitiesIfNeeded(ResumeContext context)
         {

@@ -27,12 +27,6 @@ namespace MattEland.ResumeProcessor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            /*
-            services.AddDbContext<ResumeContext>(options => {
-                options.UseSqlServer("server=.;database=myDb;trusted_connection=true;");
-            });
-            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
